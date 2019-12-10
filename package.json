@@ -1,0 +1,19 @@
+{
+  "name": "@unlimited-coders/imagebox",
+  "version": "1.0.0",
+  "description": "Sets a beautified view of images and slide show with multiple options",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unlimitedcoderss/imagebox"
+  },
+  "main": "index.js",
+  "keywords": [
+    "imagebox",
+    "npm",
+    "package",
+    "unlimitedcoders"
+  ],
+  "homepage": "https://github.com/unlimitedcoderss/imagebox#readme",
+  "author": "UnlimitedCoders"
+}
