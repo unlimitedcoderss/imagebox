@@ -1,4 +1,4 @@
-![ImageBox](http://blagojcetaleski.com/baleee/image-box-js.png)
+![ImageBox](http://blagojcetaleski.com/baleee/imgboxjs.png)
 
 # @unlimited-coders/imagebox
 
