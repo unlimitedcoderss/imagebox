@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/unlimitedcoderss/imagebox"
   },
-  "main": "index.js",
+  "main": "js/index.js",
   "keywords": [
     "imagebox",
     "npm",
@@ -15,5 +15,6 @@
     "unlimitedcoders"
   ],
   "homepage": "https://github.com/unlimitedcoderss/imagebox#readme",
-  "author": "UnlimitedCoders"
+  "author": "UnlimitedCoders",
+  "dependencies": {}
 }
