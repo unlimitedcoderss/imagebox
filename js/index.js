@@ -8,7 +8,7 @@ function imageBox(options = {}) {
     addElementToParent(imageBoxContainer, 'image-box-images-container');
 
     const imageBoxImagesContainer = document.getElementById('image-box-images-container');
-    addImage(imageBoxImagesContainer, 'https://picsum.photos/200/300');
+    addImage(imageBoxImagesContainer, 'https://picsum.photos/5000/5000');
 }
 
 function addElementToParent(parentElement, newElementId) {
@@ -21,6 +21,7 @@ function addElementToParent(parentElement, newElementId) {
 function addImage(container, imageUrl) {
     const image = document.createElement('img');
     image.src = `${imageUrl}`;
+
     container.append(image);
 }
 

@@ -18,11 +18,13 @@ $ npm install @unlimited-coders/imagebox
 ```js
 const imageBox = require("@unlimited-coders/imagebox");
 
-imagebox("So much space!");
-//=> "So much space!"
+imageBox({
+   option1: value1,
+   option2: value2
+});
 
-imagebox(1337);
-//=> Uncaught TypeError: ImageBox wants a string!
+imageBox("options");
+// => Uncaught TypeError: The 'options' parameter has to be of type object.
 //    at imageBox (<anonymous>:2:41)
 //    at <anonymous>:1:1
 ```
