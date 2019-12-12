@@ -1,3 +1,5 @@
+![ImageBox](http://blagojcetaleski.com/baleee/imgboxjs.png)
+
 # @unlimited-coders/imagebox
 
 [![npm (scoped)](https://img.shields.io/npm/v/@unlimited-coders/imagebox.svg)](https://www.npmjs.com/package/@unlimited-coders/imagebox)
