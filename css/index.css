@@ -30,9 +30,6 @@
     transform: translateY(-50%);
     font-size: 5rem;
     cursor: pointer;
-    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
-    -moz-user-select: none; /* mozilla browsers */
-    -ms-user-select: none; /* IE10+ */
 }
 
 #arrow-left {
@@ -64,4 +61,12 @@
 
 #image-box #image-box-container #image-box-images-container img.inactive {
     display: none;
+}
+
+#image-box #arrow-left,
+#image-box #arrow-right,
+#image-box .slide-show-image {
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -ms-user-select: none; /* IE10+ */
 }
