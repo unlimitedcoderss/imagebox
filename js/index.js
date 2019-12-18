@@ -2,15 +2,22 @@ function imageBox(options) {
     if (typeof options !== 'object') throw new TypeError("The 'options' parameter has to be of type object.");
 
     const currentOptions = setOptions(options);
+    init(currentOptions);
+}
 
+function init(currentOptions) {
     const imageBoxRootElement = document.getElementById('image-box');
     addElementToParent(imageBoxRootElement, 'image-box-container');
 
     const imageBoxContainer = document.getElementById('image-box-container');
+    addElementToParent(imageBoxContainer, 'image-box-options');
     addElementToParent(imageBoxContainer, 'image-box-images-container');
 
+    const imageBoxOptionsSection = document.getElementById('image-box-options');
+
     const imageBoxImagesContainer = document.getElementById('image-box-images-container');
-    addAllImagesToContainer(options.images, imageBoxImagesContainer);
+    addAllImagesToContainer(currentOptions.images, imageBoxImagesContainer);
+
 
     if (currentOptions.arrows) {
         addArrows(imageBoxImagesContainer);
@@ -18,6 +25,11 @@ function imageBox(options) {
 
     if (currentOptions.imageBorders) {
         addImageBorders();
+    }
+
+    if (currentOptions.slideShow) {
+        addElementToParent(imageBoxOptionsSection, 'slide-show-option', '&#9658;');
+        setSlideShowFunctionality();
     }
 }
 
@@ -30,12 +42,16 @@ function setOptions(options) {
         if (options.url && typeof options.url !== 'string') throw new TypeError("The 'url' property has to be of type string.");
         if (options.images && typeof options.images !== 'object') throw new TypeError("The 'images' property has to be of type array.");
     }
+    if (options.arrows && typeof options.arrows !== 'boolean') throw new TypeError("The 'arrows' property has to be of type boolean.");
+    if (options.imageBorders && typeof options.imageBorders !== 'boolean') throw new TypeError("The 'imageBorders' property has to be of type boolean.");
+    if (options.slideShow && typeof options.slideShow !== 'boolean') throw new TypeError("The 'slideShow' property has to be of type boolean.");
 
     return {
         url: options.url ? options.url : '',
         images: options.images ? options.images : [],
         arrows: getPropertyValue(options, 'arrows', true),
-        imageBorders: getPropertyValue(options, 'imageBorders', true)
+        imageBorders: getPropertyValue(options, 'imageBorders', true),
+        slideShow: getPropertyValue(options, 'slideShow', true)
     };
 }
 
@@ -66,13 +82,11 @@ function addArrowsFunctionality() {
     const nextArrow = document.getElementById('arrow-right');
 
     previousArrow.addEventListener('click', () => {
-        const currentActiveImage = document.querySelector('.slide-show-image.active');
-        setPreviousActiveImage(currentActiveImage);
+        setActiveImage('previous');
     });
 
     nextArrow.addEventListener('click', () => {
-        const currentActiveImage = document.querySelector('.slide-show-image.active');
-        setNextActiveImage(currentActiveImage);
+        setActiveImage('next');
     });
 }
 
@@ -82,9 +96,25 @@ function addArrows(container) {
     addArrowsFunctionality();
 }
 
-function addElementToParent(parentElement, newElementId) {
+function setArrowsState(isShown) {
+    const previousArrow = document.getElementById('arrow-left');
+    const nextArrow = document.getElementById('arrow-right');
+
+    setElementVisibility(previousArrow, isShown);
+    setElementVisibility(nextArrow, isShown);
+}
+
+function setElementContent(element, content) {
+    element.innerHTML = content;
+}
+
+function addElementToParent(parentElement, newElementId, content = null) {
     const element = document.createElement('div');
     element.id = newElementId;
+
+    if (content) {
+        setElementContent(element, content);
+    }
 
     parentElement.append(element);
 }
@@ -117,34 +147,48 @@ function addImageBorders() {
     }
 }
 
-function setNextActiveImage(currentActiveImage) {
+function setActiveImage(direction = 'next') {
+    const currentActiveImage = document.querySelector('.slide-show-image.active');
     const currentActiveImageOrder = parseInt(currentActiveImage.dataset['order'], 10);
 
-    const nextActiveImageOrder = currentActiveImageOrder + 1;
+    const nextActiveImageOrder = (direction === 'next') ? currentActiveImageOrder + 1 : currentActiveImageOrder - 1;
     const nextActiveImage = document.getElementById(`image-${nextActiveImageOrder}`);
 
     if (nextActiveImage) {
-        currentActiveImage.classList.remove('active');
-        currentActiveImage.classList.add('inactive');
-
-        nextActiveImage.classList.remove('inactive');
-        nextActiveImage.classList.add('active');
+        setElementVisibility(currentActiveImage, false);
+        setElementVisibility(nextActiveImage, true);
     }
 }
 
-function setPreviousActiveImage(currentActiveImage) {
-    const currentActiveImageOrder = parseInt(currentActiveImage.dataset['order'], 10);
-
-    const previousActiveImageOrder = currentActiveImageOrder - 1;
-    const previousActiveImage = document.getElementById(`image-${previousActiveImageOrder}`);
-
-    if (previousActiveImage) {
-        currentActiveImage.classList.remove('active');
-        currentActiveImage.classList.add('inactive');
-
-        previousActiveImage.classList.remove('inactive');
-        previousActiveImage.classList.add('active');
+function setElementVisibility(element, isShown) {
+    if (isShown) {
+        element.classList.remove('inactive');
+        element.classList.add('active');
+    } else {
+        element.classList.remove('active');
+        element.classList.add('inactive');
     }
+}
+
+function setSlideShowFunctionality() {
+    const slideShowOption = document.getElementById('slide-show-option');
+
+    let slideShowInterval = null;
+    let isSlideShowPlayed = false; // Slide show is not played by default
+
+    slideShowOption.addEventListener('click', () => {
+        if (!isSlideShowPlayed) {
+            isSlideShowPlayed = true; // Slide show is played
+            setArrowsState(false);
+            setElementContent(slideShowOption, '&#9724;'); // set it to be Pause symbol
+            slideShowInterval = setInterval(setActiveImage, 2000);
+        } else {
+            clearInterval(slideShowInterval);
+            setArrowsState(true);
+            setElementContent(slideShowOption, '&#9658;'); // set it to be Play symbol
+            isSlideShowPlayed = false; // Slide show now is paused
+        }
+    });
 }
 
 export default imageBox;
