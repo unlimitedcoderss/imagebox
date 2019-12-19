@@ -14,11 +14,12 @@
     background: rgba(0, 0, 0, 0.9);
 }
 
-#image-box #image-box-container #image-box-options {
-    margin: 1% 1%;
+#image-box #image-box-container #image-box-options-top {
+    padding: 1% 1%;
+    overflow: hidden;
 }
 
-#image-box #image-box-container #image-box-options #slide-show-option {
+#image-box #image-box-container #image-box-options-top #slide-show-option {
     color: white;
     font-size: 3rem;
     width: fit-content;
@@ -27,8 +28,16 @@
     cursor: pointer;
 }
 
-#image-box #image-box-container #image-box-options #slide-show-option:hover {
+#image-box #image-box-container #image-box-options-top #slide-show-option:hover {
     opacity: 0.9;
+}
+
+#image-box #image-box-container #image-box-options-bottom {
+    color: white;
+    position: absolute;
+    top: 95%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #image-box #image-box-container #image-box-images-container {

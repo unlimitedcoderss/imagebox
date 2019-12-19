@@ -7,20 +7,23 @@ function imageBox(options) {
 
 function init(currentOptions) {
     const imageBoxRootElement = document.getElementById('image-box');
-    addElementToParent(imageBoxRootElement, 'image-box-container');
+    appendElementToParent(imageBoxRootElement, 'image-box-container');
+
+    const totalNumberOfImages = currentOptions.images.length;
 
     const imageBoxContainer = document.getElementById('image-box-container');
-    addElementToParent(imageBoxContainer, 'image-box-options');
-    addElementToParent(imageBoxContainer, 'image-box-images-container');
+    appendElementToParent(imageBoxContainer, 'image-box-options-top');
+    appendElementToParent(imageBoxContainer, 'image-box-images-container');
+    appendElementToParent(imageBoxContainer, 'image-box-options-bottom');
+    setNumberOfActiveImage(totalNumberOfImages, 1);
 
-    const imageBoxOptionsSection = document.getElementById('image-box-options');
+    const imageBoxOptionsSection = document.getElementById('image-box-options-top');
 
     const imageBoxImagesContainer = document.getElementById('image-box-images-container');
     addAllImagesToContainer(currentOptions.images, imageBoxImagesContainer);
 
-
     if (currentOptions.arrows) {
-        addArrows(imageBoxImagesContainer);
+        addArrows(totalNumberOfImages, imageBoxImagesContainer);
     }
 
     if (currentOptions.imageBorders) {
@@ -28,8 +31,8 @@ function init(currentOptions) {
     }
 
     if (currentOptions.slideShow) {
-        addElementToParent(imageBoxOptionsSection, 'slide-show-option', '&#9658;');
-        setSlideShowFunctionality();
+        appendElementToParent(imageBoxOptionsSection, 'slide-show-option', '&#9658;');
+        setSlideShowFunctionality(totalNumberOfImages);
     }
 }
 
@@ -77,23 +80,23 @@ function addArrow(container, arrowDirection, arrowId) {
     container.append(arrow);
 }
 
-function addArrowsFunctionality() {
+function addArrowsFunctionality(totalNumberOfImages) {
     const previousArrow = document.getElementById('arrow-left');
     const nextArrow = document.getElementById('arrow-right');
 
     previousArrow.addEventListener('click', () => {
-        setActiveImage('previous');
+        setActiveImage(totalNumberOfImages, 'previous');
     });
 
     nextArrow.addEventListener('click', () => {
-        setActiveImage('next');
+        setActiveImage(totalNumberOfImages, 'next');
     });
 }
 
-function addArrows(container) {
+function addArrows(totalNumberOfImages, container) {
     addArrow(container, '<', 'arrow-left');
     addArrow(container, '>', 'arrow-right');
-    addArrowsFunctionality();
+    addArrowsFunctionality(totalNumberOfImages);
 }
 
 function setArrowsState(isShown) {
@@ -108,7 +111,7 @@ function setElementContent(element, content) {
     element.innerHTML = content;
 }
 
-function addElementToParent(parentElement, newElementId, content = null) {
+function appendElementToParent(parentElement, newElementId, content = null) {
     const element = document.createElement('div');
     element.id = newElementId;
 
@@ -147,7 +150,7 @@ function addImageBorders() {
     }
 }
 
-function setActiveImage(direction = 'next') {
+function setActiveImage(totalNumberOfImages = null, direction = 'next') {
     const currentActiveImage = document.querySelector('.slide-show-image.active');
     const currentActiveImageOrder = parseInt(currentActiveImage.dataset['order'], 10);
 
@@ -157,6 +160,9 @@ function setActiveImage(direction = 'next') {
     if (nextActiveImage) {
         setElementVisibility(currentActiveImage, false);
         setElementVisibility(nextActiveImage, true);
+        if (totalNumberOfImages) {
+            setNumberOfActiveImage(totalNumberOfImages, nextActiveImageOrder);
+        }
     }
 }
 
@@ -170,7 +176,14 @@ function setElementVisibility(element, isShown) {
     }
 }
 
-function setSlideShowFunctionality() {
+function setNumberOfActiveImage(totalNumberOfImages, currentNumberOfImage) {
+    const numberOfImageElement = document.getElementById('image-box-options-bottom');
+    const content = `${currentNumberOfImage} / ${totalNumberOfImages}`;
+
+    setElementContent(numberOfImageElement, content);
+}
+
+function setSlideShowFunctionality(totalNumberOfImages) {
     const slideShowOption = document.getElementById('slide-show-option');
 
     let slideShowInterval = null;
@@ -181,12 +194,14 @@ function setSlideShowFunctionality() {
             isSlideShowPlayed = true; // Slide show is played
             setArrowsState(false);
             setElementContent(slideShowOption, '&#9724;'); // set it to be Pause symbol
-            slideShowInterval = setInterval(setActiveImage, 2000);
+            slideShowInterval = setInterval(() => {
+                setActiveImage(totalNumberOfImages)
+            }, 2000);
         } else {
             clearInterval(slideShowInterval);
             setArrowsState(true);
             setElementContent(slideShowOption, '&#9658;'); // set it to be Play symbol
-            isSlideShowPlayed = false; // Slide show now is paused
+            isSlideShowPlayed = false; // Slide show is paused now
         }
     });
 }
