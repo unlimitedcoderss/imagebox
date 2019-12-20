@@ -80,6 +80,12 @@ function addArrow(container, arrowDirection, arrowId) {
     container.append(arrow);
 }
 
+function addArrows(totalNumberOfImages, container) {
+    addArrow(container, '<', 'arrow-left');
+    addArrow(container, '>', 'arrow-right');
+    addArrowsFunctionality(totalNumberOfImages);
+}
+
 function addArrowsFunctionality(totalNumberOfImages) {
     const previousArrow = document.getElementById('arrow-left');
     const nextArrow = document.getElementById('arrow-right');
@@ -93,22 +99,12 @@ function addArrowsFunctionality(totalNumberOfImages) {
     });
 }
 
-function addArrows(totalNumberOfImages, container) {
-    addArrow(container, '<', 'arrow-left');
-    addArrow(container, '>', 'arrow-right');
-    addArrowsFunctionality(totalNumberOfImages);
-}
-
-function setArrowsState(isShown) {
+function setArrowsState(visible) {
     const previousArrow = document.getElementById('arrow-left');
     const nextArrow = document.getElementById('arrow-right');
 
-    setElementVisibility(previousArrow, isShown);
-    setElementVisibility(nextArrow, isShown);
-}
-
-function setElementContent(element, content) {
-    element.innerHTML = content;
+    setImageVisibility(previousArrow, visible);
+    setImageVisibility(nextArrow, visible);
 }
 
 function appendElementToParent(parentElement, newElementId, content = null) {
@@ -122,6 +118,10 @@ function appendElementToParent(parentElement, newElementId, content = null) {
     parentElement.append(element);
 }
 
+function setElementContent(element, content) {
+    element.innerHTML = content;
+}
+
 function addImage(container, imageUrl, isActive, order) {
     const image = document.createElement('img');
     image.src = `${imageUrl}`;
@@ -133,20 +133,20 @@ function addImage(container, imageUrl, isActive, order) {
     container.append(image);
 }
 
+function addImageBorders() {
+    const images = document.querySelectorAll('.slide-show-image');
+
+    for (let i = 0; i < images.length; i++) {
+        images[i].classList.add('with-border');
+    }
+}
+
 function addAllImagesToContainer(images, container) {
     for (let i = 0; i < images.length; i++) {
         const order = i + 1;
         const isActive = (i === 0); // By default, only the first image is active and all the rest are inactive
 
         addImage(container, images[i], isActive, order);
-    }
-}
-
-function addImageBorders() {
-    const images = document.querySelectorAll('.slide-show-image');
-
-    for (let i = 0; i < images.length; i++) {
-        images[i].classList.add('with-border');
     }
 }
 
@@ -158,22 +158,11 @@ function setActiveImage(totalNumberOfImages = null, direction = 'next') {
     const nextActiveImage = document.getElementById(`image-${nextActiveImageOrder}`);
 
     if (nextActiveImage) {
-        setElementVisibility(currentActiveImage, false);
-        setElementVisibility(nextActiveImage, true);
+        setImageVisibility(currentActiveImage, false);
+        setImageVisibility(nextActiveImage, true);
         if (totalNumberOfImages) {
             setNumberOfActiveImage(totalNumberOfImages, nextActiveImageOrder);
         }
-    }
-}
-
-function setElementVisibility(element, isShown) {
-    if (isShown) {
-        element.classList.remove('inactive');
-        element.classList.add('active');
-        fadeIn(element);
-    } else {
-        element.classList.remove('active');
-        element.classList.add('inactive');
     }
 }
 
@@ -184,13 +173,24 @@ function setNumberOfActiveImage(totalNumberOfImages, currentNumberOfImage) {
     setElementContent(numberOfImageElement, content);
 }
 
+function setImageVisibility(element, visible) {
+    if (visible) {
+        element.classList.remove('inactive');
+        element.classList.add('active');
+        fadeIn(element);
+    } else {
+        element.classList.remove('active');
+        element.classList.add('inactive');
+    }
+}
+
 function setSlideShowFunctionality(totalNumberOfImages) {
     const slideShowOption = document.getElementById('slide-show-option');
 
     let slideShowInterval = null;
     let isSlideShowPlayed = false; // Slide show is not played by default
 
-    slideShowOption.addEventListener('click', () => {
+    slideShowOption.addEventListener('click', () => {0
         if (!isSlideShowPlayed) {
             isSlideShowPlayed = true; // Slide show is played
             setArrowsState(false);
