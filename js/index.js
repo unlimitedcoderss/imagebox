@@ -170,6 +170,7 @@ function setElementVisibility(element, isShown) {
     if (isShown) {
         element.classList.remove('inactive');
         element.classList.add('active');
+        fadeIn(element);
     } else {
         element.classList.remove('active');
         element.classList.add('inactive');
@@ -204,6 +205,17 @@ function setSlideShowFunctionality(totalNumberOfImages) {
             isSlideShowPlayed = false; // Slide show is paused now
         }
     });
+}
+
+function fadeIn(image) {
+    image.style.opacity = 0;
+    const tick = () => {
+        image.style.opacity = +image.style.opacity + 0.03;
+        if (+image.style.opacity < 1) {
+            (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16)
+        }
+    };
+    tick();
 }
 
 export default imageBox;

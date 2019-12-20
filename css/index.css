@@ -81,10 +81,6 @@
     border: 2.5px solid white;
 }
 
-.active {
-    display: block;
-}
-
 .inactive {
     display: none;
 }
