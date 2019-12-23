@@ -83,10 +83,11 @@ function addArrow(container, arrowDirection, arrowId) {
 function addArrows(totalNumberOfImages, container) {
     addArrow(container, '<', 'arrow-left');
     addArrow(container, '>', 'arrow-right');
-    addArrowsFunctionality(totalNumberOfImages);
+    setArrowsFunctionality(totalNumberOfImages);
+    setArrowKeysFunctionality(totalNumberOfImages, true);
 }
 
-function addArrowsFunctionality(totalNumberOfImages) {
+function setArrowsFunctionality(totalNumberOfImages) {
     const previousArrow = document.getElementById('arrow-left');
     const nextArrow = document.getElementById('arrow-right');
 
@@ -99,12 +100,34 @@ function addArrowsFunctionality(totalNumberOfImages) {
     });
 }
 
+// *functionalityAvailability* is a flag that helps us in the scenario when the arrow keys should and/or should not be available
+// for example when the slide show is played, the arrow keys should be unavailable i.e. not to be functional and vice versa
+function setArrowKeysFunctionality(totalNumberOfImages, functionalityAvailability) {
+    document.onkeydown = () => {
+        checkArrowKey(functionalityAvailability);
+    };
+
+    function checkArrowKey(functionalityAvailability) {
+        const currentEvent = window.event;
+
+        if (functionalityAvailability) {
+            if (currentEvent.keyCode === 37) {
+                // left arrow
+                setActiveImage(totalNumberOfImages, 'previous');
+            } else if (currentEvent.keyCode === 39) {
+                // right arrow
+                setActiveImage(totalNumberOfImages, 'next');
+            }
+        }
+    }
+}
+
 function setArrowsState(visible) {
     const previousArrow = document.getElementById('arrow-left');
     const nextArrow = document.getElementById('arrow-right');
 
-    setImageVisibility(previousArrow, visible);
-    setImageVisibility(nextArrow, visible);
+    setElementVisibility(previousArrow, visible);
+    setElementVisibility(nextArrow, visible);
 }
 
 function appendElementToParent(parentElement, newElementId, content = null) {
@@ -158,8 +181,8 @@ function setActiveImage(totalNumberOfImages = null, direction = 'next') {
     const nextActiveImage = document.getElementById(`image-${nextActiveImageOrder}`);
 
     if (nextActiveImage) {
-        setImageVisibility(currentActiveImage, false);
-        setImageVisibility(nextActiveImage, true);
+        setElementVisibility(currentActiveImage, false);
+        setElementVisibility(nextActiveImage, true);
         if (totalNumberOfImages) {
             setNumberOfActiveImage(totalNumberOfImages, nextActiveImageOrder);
         }
@@ -173,7 +196,7 @@ function setNumberOfActiveImage(totalNumberOfImages, currentNumberOfImage) {
     setElementContent(numberOfImageElement, content);
 }
 
-function setImageVisibility(element, visible) {
+function setElementVisibility(element, visible) {
     if (visible) {
         element.classList.remove('inactive');
         element.classList.add('active');
@@ -190,10 +213,11 @@ function setSlideShowFunctionality(totalNumberOfImages) {
     let slideShowInterval = null;
     let isSlideShowPlayed = false; // Slide show is not played by default
 
-    slideShowOption.addEventListener('click', () => {0
+    slideShowOption.addEventListener('click', () => {
         if (!isSlideShowPlayed) {
             isSlideShowPlayed = true; // Slide show is played
             setArrowsState(false);
+            setArrowKeysFunctionality(totalNumberOfImages, false);
             setElementContent(slideShowOption, '&#9724;'); // set it to be Pause symbol
             slideShowInterval = setInterval(() => {
                 setActiveImage(totalNumberOfImages)
@@ -201,6 +225,7 @@ function setSlideShowFunctionality(totalNumberOfImages) {
         } else {
             clearInterval(slideShowInterval);
             setArrowsState(true);
+            setArrowKeysFunctionality(totalNumberOfImages, true);
             setElementContent(slideShowOption, '&#9658;'); // set it to be Play symbol
             isSlideShowPlayed = false; // Slide show is paused now
         }
