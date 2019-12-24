@@ -18,9 +18,12 @@ function init(currentOptions) {
     setNumberOfActiveImage(totalNumberOfImages, 1);
 
     const imageBoxOptionsSection = document.getElementById('image-box-options-top');
+    appendElementToParent(imageBoxOptionsSection, 'close-option', '&#215;');
 
     const imageBoxImagesContainer = document.getElementById('image-box-images-container');
     addAllImagesToContainer(currentOptions.images, imageBoxImagesContainer);
+
+    setCloseImageBoxFunctionality(imageBoxRootElement);
 
     if (currentOptions.arrows) {
         addArrows(totalNumberOfImages, imageBoxImagesContainer);
@@ -241,6 +244,16 @@ function fadeIn(image) {
         }
     };
     tick();
+}
+
+function setCloseImageBoxFunctionality(imageBoxRootElement) {
+    const closeOptionElement = document.getElementById('close-option');
+    closeOptionElement.addEventListener('click', () => {
+        while (imageBoxRootElement.hasChildNodes()) {
+            imageBoxRootElement.removeChild(imageBoxRootElement.lastChild);
+        }
+        imageBoxRootElement.remove();
+    });
 }
 
 export default imageBox;
