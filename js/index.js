@@ -22,7 +22,6 @@ function init(currentOptions) {
 
     const imageBoxImagesContainer = document.getElementById('image-box-images-container');
     addAllImagesToContainer(currentOptions.images, imageBoxImagesContainer);
-
     setCloseImageBoxFunctionality(imageBoxRootElement);
 
     if (currentOptions.arrows) {
@@ -178,16 +177,19 @@ function addAllImagesToContainer(images, container) {
 
 function setActiveImage(totalNumberOfImages = null, direction = 'next') {
     const currentActiveImage = document.querySelector('.slide-show-image.active');
-    const currentActiveImageOrder = parseInt(currentActiveImage.dataset['order'], 10);
 
-    const nextActiveImageOrder = (direction === 'next') ? currentActiveImageOrder + 1 : currentActiveImageOrder - 1;
-    const nextActiveImage = document.getElementById(`image-${nextActiveImageOrder}`);
+    if (currentActiveImage) {
+        const currentActiveImageOrder = parseInt(currentActiveImage.dataset['order'], 10);
 
-    if (nextActiveImage) {
-        setElementVisibility(currentActiveImage, false);
-        setElementVisibility(nextActiveImage, true);
-        if (totalNumberOfImages) {
-            setNumberOfActiveImage(totalNumberOfImages, nextActiveImageOrder);
+        const nextActiveImageOrder = (direction === 'next') ? currentActiveImageOrder + 1 : currentActiveImageOrder - 1;
+        const nextActiveImage = document.getElementById(`image-${nextActiveImageOrder}`);
+
+        if (nextActiveImage) {
+            setElementVisibility(currentActiveImage, false);
+            setElementVisibility(nextActiveImage, true);
+            if (totalNumberOfImages) {
+                setNumberOfActiveImage(totalNumberOfImages, nextActiveImageOrder);
+            }
         }
     }
 }
@@ -236,13 +238,17 @@ function setSlideShowFunctionality(totalNumberOfImages) {
 }
 
 function fadeIn(image) {
-    image.style.opacity = 0;
+    let imageOpacity = 0;
+    image.style.opacity = imageOpacity.toString(10);
+
     const tick = () => {
-        image.style.opacity = +image.style.opacity + 0.03;
-        if (+image.style.opacity < 1) {
-            (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16)
+        imageOpacity = imageOpacity + 0.02;
+        image.style.opacity = imageOpacity.toString(10);
+        if (imageOpacity < 1) {
+            (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 15)
         }
     };
+
     tick();
 }
 
