@@ -1,5 +1,6 @@
 function imageBox(options) {
-    if (typeof options !== 'object') throw new TypeError("The 'options' parameter has to be of type object.");
+    if (!(typeof options === 'object'))
+        throw new TypeError("The 'options' parameter has to be of type object.");
 
     const currentOptions = setOptions(options);
     init(currentOptions);
@@ -8,24 +9,32 @@ function imageBox(options) {
 function init(currentOptions) {
     const imageBoxRootElement = document.getElementById('image-box');
     appendElementToParent(imageBoxRootElement, 'image-box-container');
-
     const totalNumberOfImages = currentOptions.images.length;
 
     const imageBoxContainer = document.getElementById('image-box-container');
     appendElementToParent(imageBoxContainer, 'image-box-options-top');
     appendElementToParent(imageBoxContainer, 'image-box-images-container');
     appendElementToParent(imageBoxContainer, 'image-box-options-bottom');
+
+    const imageBoxBottomOptionsSection = document.getElementById('image-box-options-bottom');
+    appendElementToParent(imageBoxBottomOptionsSection, 'image-number');
     setNumberOfActiveImage(totalNumberOfImages, 1);
 
-    const imageBoxOptionsSection = document.getElementById('image-box-options-top');
-    appendElementToParent(imageBoxOptionsSection, 'close-option', '&#215;');
+    const imageBoxTopOptionsSection = document.getElementById('image-box-options-top');
+    appendElementToParent(imageBoxTopOptionsSection, 'close-option', '&#215;');
 
     const imageBoxImagesContainer = document.getElementById('image-box-images-container');
     addAllImagesToContainer(currentOptions.images, imageBoxImagesContainer);
-    setCloseImageBoxFunctionality(imageBoxRootElement);
 
     if (currentOptions.arrows) {
-        addArrows(totalNumberOfImages, imageBoxImagesContainer);
+        if (!currentOptions.arrows.position || currentOptions.arrows.position === 'middle') {
+            addArrows(totalNumberOfImages, imageBoxImagesContainer);
+        } else if (currentOptions.arrows.position === 'down') {
+            addArrows(totalNumberOfImages, imageBoxBottomOptionsSection);
+        } else if (currentOptions.arrows.position === 'inside') {
+            // TODO: Change this to be inside the images
+            addArrows(totalNumberOfImages, imageBoxImagesContainer);
+        }
     }
 
     if (currentOptions.imageBorders) {
@@ -33,9 +42,11 @@ function init(currentOptions) {
     }
 
     if (currentOptions.slideShow) {
-        appendElementToParent(imageBoxOptionsSection, 'slide-show-option', '&#9658;');
+        appendElementToParent(imageBoxTopOptionsSection, 'slide-show-option', '&#9658;');
         setSlideShowFunctionality(totalNumberOfImages);
     }
+
+    setCloseImageBoxFunctionality(imageBoxRootElement);
 }
 
 function setOptions(options) {
@@ -44,17 +55,28 @@ function setOptions(options) {
     } else if (options.url && options.images) {
         throw new Error("The properties url and images cannot be filled at the same time. Only one of them should be present.");
     } else {
-        if (options.url && typeof options.url !== 'string') throw new TypeError("The 'url' property has to be of type string.");
-        if (options.images && typeof options.images !== 'object') throw new TypeError("The 'images' property has to be of type array.");
+        if (options.url && typeof options.url !== 'string')
+            throw new TypeError("The 'url' property has to be of type string.");
+        if (options.images && typeof options.images !== 'object')
+            throw new TypeError("The 'images' property has to be of type array.");
     }
-    if (options.arrows && typeof options.arrows !== 'boolean') throw new TypeError("The 'arrows' property has to be of type boolean.");
-    if (options.imageBorders && typeof options.imageBorders !== 'boolean') throw new TypeError("The 'imageBorders' property has to be of type boolean.");
-    if (options.slideShow && typeof options.slideShow !== 'boolean') throw new TypeError("The 'slideShow' property has to be of type boolean.");
+
+    const arrowsPositionPossibleValues = ['middle', 'down', 'inside'];
+    if (options.arrows && typeof options.arrows !== 'object')
+        throw new TypeError("The 'arrows' property has to be of type object.");
+    if (options.arrows && options.arrows.position && typeof options.arrows.position !== 'string')
+        throw new TypeError("The 'arrows position' property has to be of type string.");
+    if (options.arrows && options.arrows.position && !arrowsPositionPossibleValues.includes(options.arrows.position))
+        throw new TypeError("The 'arrows position' property value has to be one of the following: 'middle', 'down' or 'inside'.");
+    if (options.imageBorders && typeof options.imageBorders !== 'boolean')
+        throw new TypeError("The 'imageBorders' property has to be of type boolean.");
+    if (options.slideShow && typeof options.slideShow !== 'boolean')
+        throw new TypeError("The 'slideShow' property has to be of type boolean.");
 
     return {
         url: options.url ? options.url : '',
         images: options.images ? options.images : [],
-        arrows: getPropertyValue(options, 'arrows', true),
+        arrows: options.arrows ? options.arrows : {position: arrowsPositionPossibleValues[0]},
         imageBorders: getPropertyValue(options, 'imageBorders', true),
         slideShow: getPropertyValue(options, 'slideShow', true)
     };
@@ -83,8 +105,8 @@ function addArrow(container, arrowDirection, arrowId) {
 }
 
 function addArrows(totalNumberOfImages, container) {
-    addArrow(container, '<', 'arrow-left');
-    addArrow(container, '>', 'arrow-right');
+    addArrow(container, '&#x2039;', 'arrow-left');
+    addArrow(container, '&#x203A;', 'arrow-right');
     setArrowsFunctionality(totalNumberOfImages);
     setArrowKeysFunctionality(totalNumberOfImages, true);
 }
@@ -102,7 +124,7 @@ function setArrowsFunctionality(totalNumberOfImages) {
     });
 }
 
-// *functionalityAvailability* is a flag that helps us in the scenario when the arrow keys should and/or should not be available
+// *functionalityAvailability* is a flag that helps us in the scenarios when the arrow keys should and/or should not be available
 // for example when the slide show is played, the arrow keys should be unavailable i.e. not to be functional and vice versa
 function setArrowKeysFunctionality(totalNumberOfImages, functionalityAvailability) {
     document.onkeydown = () => {
@@ -175,7 +197,7 @@ function addAllImagesToContainer(images, container) {
     }
 }
 
-function setActiveImage(totalNumberOfImages = null, direction = 'next') {
+function setActiveImage(totalNumberOfImages = 0, direction = 'next') {
     const currentActiveImage = document.querySelector('.slide-show-image.active');
 
     if (currentActiveImage) {
@@ -195,7 +217,7 @@ function setActiveImage(totalNumberOfImages = null, direction = 'next') {
 }
 
 function setNumberOfActiveImage(totalNumberOfImages, currentNumberOfImage) {
-    const numberOfImageElement = document.getElementById('image-box-options-bottom');
+    const numberOfImageElement = document.getElementById('image-number');
     const content = `${currentNumberOfImage} / ${totalNumberOfImages}`;
 
     setElementContent(numberOfImageElement, content);
