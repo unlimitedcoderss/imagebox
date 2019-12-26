@@ -127,19 +127,17 @@ function setArrowsFunctionality(totalNumberOfImages) {
 // *functionalityAvailability* is a flag that helps us in the scenarios when the arrow keys should and/or should not be available
 // for example when the slide show is played, the arrow keys should be unavailable i.e. not to be functional and vice versa
 function setArrowKeysFunctionality(totalNumberOfImages, functionalityAvailability) {
-    document.onkeydown = () => {
-        checkArrowKey(functionalityAvailability);
+    document.onkeyup = (event) => {
+        checkArrowKey(functionalityAvailability, event);
     };
 
-    function checkArrowKey(functionalityAvailability) {
-        const currentEvent = window.event;
-
+    function checkArrowKey(functionalityAvailability, event) {
         if (functionalityAvailability) {
-            if (currentEvent.keyCode === 37) {
-                // left arrow
+            if (event.keyCode === 37) {
+                // left arrow key
                 setActiveImage(totalNumberOfImages, 'previous');
-            } else if (currentEvent.keyCode === 39) {
-                // right arrow
+            } else if (event.keyCode === 39) {
+                // right arrow key
                 setActiveImage(totalNumberOfImages, 'next');
             }
         }
@@ -240,7 +238,7 @@ function setSlideShowFunctionality(totalNumberOfImages) {
     let slideShowInterval = null;
     let isSlideShowPlayed = false; // Slide show is not played by default
 
-    slideShowOption.addEventListener('click', () => {
+    const slideShowFunctionality = () => {
         if (!isSlideShowPlayed) {
             isSlideShowPlayed = true; // Slide show is played
             setArrowsState(false);
@@ -256,6 +254,17 @@ function setSlideShowFunctionality(totalNumberOfImages) {
             setElementContent(slideShowOption, '&#9658;'); // set it to be Play symbol
             isSlideShowPlayed = false; // Slide show is paused now
         }
+    };
+
+    document.body.onkeyup = (event) => {
+        if (event.keyCode === 32) {
+            // space key
+            slideShowFunctionality();
+        }
+    };
+
+    slideShowOption.addEventListener('click', () => {
+        slideShowFunctionality();
     });
 }
 
