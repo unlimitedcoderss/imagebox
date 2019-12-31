@@ -5,7 +5,9 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@unlimited-coders/imagebox.svg)](https://www.npmjs.com/package/@unlimited-coders/imagebox)
 [![npm bundle size (minified)](https://img.shields.io/bundlephobia/min/@unlimited-coders/imagebox.svg)](https://www.npmjs.com/package/@unlimited-coders/imagebox)
 
-An npm package that sets a beautified view of images and slide show with multiple options
+A lightweight plugin built with only Vanilla JavaScript, without any dependencies. 
+
+Sets a beautified view of images and slide show with multiple options.
 
 ## Installation
 
