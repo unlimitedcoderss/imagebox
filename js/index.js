@@ -7,6 +7,8 @@ function imageBox(options) {
 }
 
 function init(currentOptions) {
+    setBodyOverflow();
+
     const imageBoxRootElement = document.getElementById('image-box');
     appendElementToParent(imageBoxRootElement, 'image-box-container');
     const totalNumberOfImages = currentOptions.images.length;
@@ -291,6 +293,13 @@ function setCloseImageBoxFunctionality(imageBoxRootElement) {
         }
         imageBoxRootElement.remove();
     });
+}
+
+// Sets the overflow of the body element to be hidden
+// so we prevent scroll on the background content
+function setBodyOverflow() {
+    const bodyElement = document.getElementsByTagName('body')[0];
+    bodyElement.style.overflow = 'hidden';
 }
 
 export default imageBox;
